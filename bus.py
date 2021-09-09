@@ -1,6 +1,8 @@
 #!/bin/python
 
 import numpy as np
+from time import sleep
+from tqdm import trange
 
 file = open("schedule.txt", "r")
 
@@ -55,12 +57,24 @@ for unique in uniques:
     for uniq in uniques:
         prob[unique].append(buses[unique][uniq] / totalbuses[unique])
 
-def bus_forecast(nbuses, bus):
-    buses = []
-    for i in range(nbuses):
-        nextbus = np.random.choice(uniques, p=prob[bus])
-        buses.append(nextbus)
-        bus = nextbus
-    return buses
+# create generator for forecasting buses
+def bus_forecast(bus):
+    while True:
+        bus = np.random.choice(uniques, p=prob[bus])
+        yield bus
 
-print(f"Подошел автобус: {bus_forecast(1, np.random.choice(uniques))}")
+busgen = bus_forecast(np.random.choice(uniques))
+
+while True:
+    bus = next(busgen)
+    print(f"Подошел автобус {bus}")
+    answ = input("Сесть в него? (y/n): ")
+    if answ == "y":
+        print(f"Вы успешно сели в автобус {bus}!")
+        break
+    elif answ == "n":
+        print("Продолжаем ожидать автобус...")
+    else:
+        print("Вы не успели сесть в автобус...")
+    for i in trange(100):
+        sleep(0.1)
