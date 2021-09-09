@@ -23,6 +23,8 @@ for line in file:
         names.append(''.join(name))
         name = []
 
+# TRAIN MARKOV CHAIN
+
 # append every unique name to uniques
 uniques = []
 for name in names:
@@ -30,47 +32,50 @@ for name in names:
         uniques.append(name)
 
 # create dict of dicts for counting occurences
-buses = {}
+items = {}
 for unique in uniques:
-    buses[unique] = {}
+    items[unique] = {}
     for uniq in uniques:
-        buses[unique][uniq] = 0
+        items[unique][uniq] = 0
 
-# count every bus occurence after every bus
+# count item occurence after every item
 for i in range(len(names)):
     if i < len(names) - 1:
-        buses[names[i]][names[i+1]] += 1
+        items[names[i]][names[i+1]] += 1
     else:
-        buses[names[i]][names[-1]] += 1
+        items[names[i]][names[-1]] += 1
 
-# count total number of buses after every bus
-totalbuses = {}
+# count total number of items after every item
+totalitems = {}
 for unique in uniques:
-    totalbuses[unique] = 0
+    totalitems[unique] = 0
     for uniq in uniques:
-        totalbuses[unique] += buses[unique][uniq]
+        totalitems[unique] += items[unique][uniq]
 
-# calculate probability of every bus occurence after every bus
+# calculate probability of item occurence after every item
 prob = {}
 for unique in uniques:
     prob[unique] = []
     for uniq in uniques:
-        prob[unique].append(buses[unique][uniq] / totalbuses[unique])
+        prob[unique].append(items[unique][uniq] / totalitems[unique])
 
-# create generator for forecasting buses
-def bus_forecast(bus):
+# create generator for forecasting items
+def item_forecast(item):
     while True:
-        bus = np.random.choice(uniques, p=prob[bus])
-        yield bus
+        item = np.random.choice(uniques, p=prob[item])
+        yield item
 
-busgen = bus_forecast(np.random.choice(uniques))
+# FORECAST ITEMS
+
+# initialize generator
+itemgen = item_forecast(np.random.choice(uniques))
 
 while True:
-    bus = next(busgen)
-    print(f"Подошел автобус {bus}")
+    item = next(itemgen)
+    print(f"Подошел автобус {item}")
     answ = input("Сесть в него? (y/n): ")
     if answ == "y":
-        print(f"Вы успешно сели в автобус {bus}!")
+        print(f"Вы успешно сели в автобус {item}!")
         break
     elif answ == "n":
         print("Продолжаем ожидать автобус...")
