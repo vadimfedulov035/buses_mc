@@ -1,6 +1,6 @@
 #!/bin/python
 
-from time import sleep
+import numpy as np
 
 file = open("schedule.txt", "r")
 
@@ -51,10 +51,16 @@ for unique in uniques:
 # calculate probability of every bus occurence after every bus
 prob = {}
 for unique in uniques:
-    prob[unique] = {}
+    prob[unique] = []
     for uniq in uniques:
-        prob[unique][uniq] = buses[unique][uniq] / totalbuses[unique]
+        prob[unique].append(buses[unique][uniq] / totalbuses[unique])
 
 def bus_forecast(nbuses, bus):
+    buses = []
     for i in range(nbuses):
-        nextbus = np.random.choice( p=prob[bus])
+        nextbus = np.random.choice(uniques, p=prob[bus])
+        buses.append(nextbus)
+        bus = nextbus
+    return buses
+
+print(f"Подошел автобус: {bus_forecast(1, np.random.choice(uniques))}")
