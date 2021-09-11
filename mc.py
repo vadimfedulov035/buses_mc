@@ -67,19 +67,21 @@ def item_forecast(item):
 
 # FORECAST ITEMS
 
-# initialize generator
-itemgen = item_forecast(np.random.choice(uniques))
-
-while True:
-    item = next(itemgen)
-    print(f"Подошел автобус {item}")
-    answ = input("Сесть в него? (y/n): ")
-    if answ == "y":
-        print(f"Вы успешно сели в автобус {item}!")
-        break
-    elif answ == "n":
-        print("Продолжаем ожидать автобус...")
-    else:
-        print("Вы не успели сесть в автобус...")
-    for i in trange(100):
-        sleep(0.1)
+forecast = True
+while forecast:
+    itemgen = item_forecast(np.random.choice(uniques))
+    while True:
+        item = next(itemgen)
+        print(f"Подош(ел/ла) автобус/троллейбус/маршрутка {item}?")
+        answ = input("Предсказание верно? (y/n/q): ")
+        if answ == "y":
+            print(f"Предсказываю дальше!\n")
+        elif answ == "n":
+            print("Предсказываю снова...\n")
+            break
+        elif answ == "q":
+            forecast = False
+            print("Оканчиваю работу...")
+            break
+        else:
+            print("Не понял вашего ответа\n")
