@@ -2,7 +2,6 @@
 
 import numpy as np
 from time import sleep
-from tqdm import trange
 
 file = open("schedule.txt", "r")
 
@@ -25,11 +24,8 @@ for line in file:
 
 # TRAIN MARKOV CHAIN
 
-# append every unique name to uniques
-uniques = []
-for name in names:
-    if name not in uniques:
-        uniques.append(name)
+# find uniques
+uniques = set(names)
 
 # create dict of dicts for counting occurences
 items = {}
@@ -43,7 +39,7 @@ for i in range(len(names)):
     if i < len(names) - 1:
         items[names[i]][names[i+1]] += 1
     else:
-        items[names[i]][names[-1]] += 1
+        items[names[i]][names[0]] += 1
 
 # count total number of items after every item
 totalitems = {}
@@ -62,14 +58,14 @@ for unique in uniques:
 # create generator for forecasting items
 def item_forecast(item):
     while True:
-        item = np.random.choice(uniques, p=prob[item])
+        item = np.random.choice(tuple(uniques), p=prob[item])
         yield item
 
 # FORECAST ITEMS
 
 forecast = True
 while forecast:
-    itemgen = item_forecast(np.random.choice(uniques))
+    itemgen = item_forecast(np.random.choice(tuple(uniques)))
     while True:
         item = next(itemgen)
         print(f"Подош(ел/ла) автобус/троллейбус/маршрутка {item}?")
